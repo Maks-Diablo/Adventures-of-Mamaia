@@ -20,8 +20,12 @@ class Fighter():
         self.attack_type = 0
         self.attack_cooldown = 0
         self.hit = False
-        self.health = 10000
+        self.health = 1000
         self.alive = True
+        self.health_damage = 10
+
+        # проверка уровня
+        self.level = 0  # 0 - игра, 1 - пройден
 
     def load_images(self, sprite_sheet, animation_steps):
         # извлечение изображения из листа спрайтов
@@ -33,7 +37,8 @@ class Fighter():
                 for x in range(animation):
                     temp_image = sprite_sheet[i].subsurface(x * self.size, y * self.size, self.size, self.size)
                     temp_img_list.append(
-                        pygame.transform.scale(temp_image, (self.size * self.image_scale, self.size * self.image_scale)))
+                        pygame.transform.scale(temp_image,
+                                               (self.size * self.image_scale, self.size * self.image_scale)))
                 animation_list.append(temp_img_list)
         return animation_list
 
@@ -54,9 +59,13 @@ class Fighter():
             if key[pygame.K_a]:
                 dx = -SPEED
                 self.running = True
+                if target.alive == False:
+                    self.flip = True
             if key[pygame.K_d]:
                 dx = SPEED
                 self.running = True
+                if target.alive == False:
+                    self.flip = False
 
             # прыжок
             if key[pygame.K_w] and self.jump == False:
@@ -69,8 +78,10 @@ class Fighter():
                 # опредление вида атаки
                 if key[pygame.K_r]:
                     self.attack_type = 1
+                    self.health_damage = 10
                 if key[pygame.K_t]:
                     self.attack_type = 2
+                    self.health_damage = 20
 
         # добавление гравитации
         self.vel_y += GRAVITY
@@ -79,7 +90,7 @@ class Fighter():
         # остановка персонажа на краях
         if self.rect.left + dx < 0:
             dx = -self.rect.left
-        if self.rect.right + dx > screen_width:
+        if self.rect.right + dx > screen_width and self.level == 0 and target.alive == True:
             dx = screen_width - self.rect.right
         if self.rect.bottom + dy > screen_height - 70:
             self.vel_y = 0
@@ -87,7 +98,7 @@ class Fighter():
             dy = screen_height - 70 - self.rect.bottom
 
         # убеждаемся, что персонажи смотрят друг на друга
-        if self.alive == True:
+        if self.alive == True and target.alive == True:
             if target.rect.centerx > self.rect.centerx:
                 self.flip = False
             else:
@@ -101,26 +112,25 @@ class Fighter():
         self.rect.x += dx
         self.rect.y += dy
 
-
     def update(self):
         # проверка какая анимация
         if self.health <= 0:
             self.health = 0
             self.alive = False
-            self.update_action(6) # Death
+            self.update_action(6)  # Death
         elif self.hit == True:
             self.update_action(5)
         elif self.attacking == True:
             if self.attack_type == 1:
-                self.update_action(3) # Attack1
+                self.update_action(3)  # Attack1
             elif self.attack_type == 2:
-                self.update_action(4) # Attack2
+                self.update_action(4)  # Attack2
         elif self.jump == True:
-            self.update_action(2) # Jump
+            self.update_action(2)  # Jump
         elif self.running == True:
-            self.update_action(1) # Run
+            self.update_action(1)  # Run
         else:
-            self.update_action(0) # Idle
+            self.update_action(0)  # Idle
 
         animation_cooldown = 50
         # update image
@@ -139,8 +149,10 @@ class Fighter():
                 # была ли атака выполнена
                 if self.action == 3 or self.action == 4:
                     self.attacking = False
-                    self.attack_cooldown = 20
-                # если была нанесена атака
+                    if self.action == 4:
+                        self.attack_cooldown = 40
+                    elif self.action == 3:
+                        self.attack_cooldown = 20  # если была нанесена атака
                 if self.action == 5:
                     self.hit = False
                     # если боец находился в середине атаки тогда атака остановлена
@@ -153,7 +165,7 @@ class Fighter():
             attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y,
                                          2 * self.rect.width, self.rect.height)
             if attacking_rect.colliderect(target.rect):
-                target.health -= 10
+                target.health -= self.health_damage
                 target.hit = True
             pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
@@ -167,4 +179,5 @@ class Fighter():
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
         pygame.draw.rect(surface, (255, 0, 0), self.rect)
-        surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
+        surface.blit(img, (
+        self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))

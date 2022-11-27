@@ -26,8 +26,9 @@ class Fighter_bot():
         self.attack_cooldown = 0
         self.run_cooldown = 0
         self.hit = False
-        self.health = 10000
+        self.health = 10
         self.alive = True
+        self.health_damage = 10
 
     def load_images(self, sprite_sheet, animation_steps):
         # извлечение изображения из листа спрайтов
@@ -105,8 +106,10 @@ class Fighter_bot():
                 # опредление вида атаки
                 if rand_attack_type:
                     self.attack_type = 1
+                    self.health_damage = 10
                 else:
                     self.attack_type = 2
+                    self.health_damage = 20
 
 
         # добавление гравитации
@@ -176,7 +179,10 @@ class Fighter_bot():
                 # была ли атака выполнена
                 if self.action == 3 or self.action == 4:
                     self.attacking = False
-                    self.attack_cooldown = 20
+                    if self.action == 4:
+                        self.attack_cooldown = 40
+                    elif self.action == 3:
+                        self.attack_cooldown = 20
                 # если была нанесена атака
                 if self.action == 5:
                     self.hit = False
@@ -190,7 +196,7 @@ class Fighter_bot():
             attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y,
                                          1.5 * self.rect.width, self.rect.height)
             if attacking_rect.colliderect(target.rect):
-                target.health -= 10
+                target.health -= self.health_damage
                 target.hit = True
             pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
