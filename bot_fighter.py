@@ -3,9 +3,6 @@ import random
 import pygame
 
 
-# print(Fighter.move.rect.x)
-
-
 class Fighter_bot():
     def __init__(self, x, y, flip, data, sprite_sheet, animation_steps):
         self.size = data[0]
@@ -29,6 +26,9 @@ class Fighter_bot():
         self.health = 10
         self.alive = True
         self.health_damage = 10
+
+        # проверка уровня
+        self.level = 0  # 0 - игра, 1 - пройден
 
     def load_images(self, sprite_sheet, animation_steps):
         # извлечение изображения из листа спрайтов
@@ -111,7 +111,6 @@ class Fighter_bot():
                     self.attack_type = 2
                     self.health_damage = 20
 
-
         # добавление гравитации
         self.vel_y += GRAVITY
         dy += self.vel_y
@@ -142,7 +141,9 @@ class Fighter_bot():
         self.rect.y += dy
 
     def update(self):
-
+        # проверка мертв или нет бот
+        if self.alive == False:
+            self.level = 1
         # проверка какая анимация
         if self.health <= 0:
             self.health = 0

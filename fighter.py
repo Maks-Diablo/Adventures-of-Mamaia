@@ -87,6 +87,9 @@ class Fighter():
         self.vel_y += GRAVITY
         dy += self.vel_y
 
+        # проверка уровня
+        if target.level == 1: self.level = 1
+
         # остановка персонажа на краях
         if self.rect.left + dx < 0:
             dx = -self.rect.left
@@ -180,4 +183,4 @@ class Fighter():
         img = pygame.transform.flip(self.image, self.flip, False)
         pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (
-        self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
+            self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
