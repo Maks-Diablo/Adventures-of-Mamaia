@@ -9,7 +9,7 @@ from main_functions import Func
 
 # уровень
 LEVEL = 0
-level_game = 1
+level_game = 2
 
 screen = variables.screen
 SCREEN_WIDTH = variables.SCREEN_WIDTH
@@ -63,9 +63,11 @@ def main_game():
     # игровой цикл
     run = True
     while run:
+
         clock.tick(FPS)  # задержка
         # отрисовка фона
         Func.draw_bg(level_game)
+
         # показать здоровье игрока
         Func.draw_health_bar(fighter_1.health, 20, 20)
         Func.draw_health_bar(fighter_2.health, 580, 20)
