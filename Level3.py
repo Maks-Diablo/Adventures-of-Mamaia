@@ -10,7 +10,7 @@ from main_functions import Func
 
 # уровень
 LEVEL = 0
-level_game = 2
+level_game = 3
 
 screen = variables.screen
 SCREEN_WIDTH = variables.SCREEN_WIDTH
@@ -48,6 +48,7 @@ WIZARD_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 # создание двух экземпляров бойцов
 fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
 fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+fighter_3 = Fighter_bot(500, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
 
 
 def main_game():
@@ -64,19 +65,22 @@ def main_game():
         rand_protection = random.randint(0, 3)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
 
         # передвежение персонажей
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2)
+        fighter_1.move_for2(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, fighter_3)
         fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, rand_protection)
+        fighter_3.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, rand_protection)
 
         # update fighters
-        fighter_1.update()
+        fighter_1.update_for2()
         fighter_2.update()
+        fighter_3.update()
 
         # отрисовка персонажей
-        fighter_1.draw(screen)
+        fighter_1.draw_for2(screen)
         fighter_2.draw(screen)
+        fighter_3.draw(screen)
 
         # проверка перехода на след уровень
-        if fighter_2.alive == False and fighter_1.rect.right > SCREEN_WIDTH:
+        if fighter_2.alive == False and fighter_3.alive == False and fighter_1.rect.right > SCREEN_WIDTH:
             LEVEL = 1
             run = False
 

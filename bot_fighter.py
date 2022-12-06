@@ -5,9 +5,10 @@ import pygame
 
 class Fighter_bot():
     def __init__(self, x, y, flip, data, sprite_sheet, animation_steps):
-        self.size = data[0]
-        self.image_scale = data[1]
-        self.offset = data[2]
+        self.size_w = data[0]
+        self.size_h = data[1]
+        self.image_scale = data[2]
+        self.offset = data[3]
         self.flip = flip
         self.animation_list = self.load_images(sprite_sheet, animation_steps)
         self.action = 0
@@ -31,18 +32,15 @@ class Fighter_bot():
         self.level = 0  # 0 - игра, 1 - пройден
 
     def load_images(self, sprite_sheet, animation_steps):
-        # извлечение изображения из листа спрайтов
+        # extract images from spritesheet
         animation_list = []
-        for i in range(len(sprite_sheet)):
-            animation_steps2 = [animation_steps[i]]
-            for y, animation in enumerate(animation_steps2):
-                temp_img_list = []
-                for x in range(animation):
-                    temp_image = sprite_sheet[i].subsurface(x * self.size, y * self.size, self.size, self.size)
-                    temp_img_list.append(
-                        pygame.transform.scale(temp_image,
-                                               (self.size * self.image_scale, self.size * self.image_scale)))
-                animation_list.append(temp_img_list)
+        for y, animation in enumerate(animation_steps):
+            temp_img_list = []
+            for x in range(animation):
+                temp_img = sprite_sheet.subsurface(x * self.size_w, y * self.size_h, self.size_w, self.size_h)
+                temp_img_list.append(
+                    pygame.transform.scale(temp_img, (self.size_w * self.image_scale, self.size_w * self.image_scale)))
+            animation_list.append(temp_img_list)
         return animation_list
 
     def move(self, screen_width, screen_height, surface, target, rand_protection):
@@ -82,7 +80,7 @@ class Fighter_bot():
         # может выполнять действия только если не атакует
         if self.attacking == False and self.alive == True:
             # movement
-            attacking_rect = 250
+            attacking_rect = 80
             if self.rect.x + attacking_rect != self.rect_fighter.x and self.run_cooldown == 0:
                 if (self.rect.x + attacking_rect) < self.rect_fighter.x:
                     dx = SPEED
@@ -163,7 +161,7 @@ class Fighter_bot():
         else:
             self.update_action(0)  # Idle
 
-        animation_cooldown = 50
+        animation_cooldown = 115
         # update image
         self.image = self.animation_list[self.action][self.frame_index]
         # проверка прошло ли достаточно времени с момента последнего обновления
@@ -194,8 +192,8 @@ class Fighter_bot():
     def attack(self, surface, target):
         if self.attack_cooldown == 0:
             self.attacking = True
-            attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y,
-                                         1.5 * self.rect.width, self.rect.height)
+            attacking_rect = pygame.Rect(self.rect.centerx - (1 / 3 * self.rect.width * self.flip), self.rect.y,
+                                         1 / 3 * self.rect.width, self.rect.height)
             if attacking_rect.colliderect(target.rect):
                 target.health -= self.health_damage
                 target.hit = True
@@ -210,6 +208,6 @@ class Fighter_bot():
 
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
-        pygame.draw.rect(surface, (255, 0, 0), self.rect)
+        # pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (
             self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))

@@ -2,10 +2,13 @@ import random
 
 import pygame
 
+import pause_menu
 import variables
 from bot_fighter import Fighter_bot
 from fighter import Fighter
 from main_functions import Func
+
+pygame.init()
 
 # уровень
 LEVEL = 0
@@ -23,36 +26,26 @@ RED = variables.RED
 WHITE = variables.WHITE
 
 # define fighters variables
-WIZARD_SIZE = 180  # 150
-WIZARD_SCALE = 3
-WIZARD_OFFSET = [57, 56]
-WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
-KNIGHT_SIZE = 150  # 180
-KNIGHT_SCALE = 4
-KNIGHT_OFFSET = [57, 56]
-KNIGHT_DATA = [KNIGHT_SIZE, KNIGHT_SCALE, KNIGHT_OFFSET]
+WIZARD_SIZE_W = 80  # 150
+WIZARD_SIZE_H = 80
+WIZARD_SCALE = 7
+WIZARD_OFFSET = [30, 30]
+WIZARD_DATA = [WIZARD_SIZE_W, WIZARD_SIZE_H, WIZARD_SCALE, WIZARD_OFFSET]
+KNIGHT_SIZE_W = 80  # 180
+KNIGHT_SIZE_H = 80
+KNIGHT_SCALE = 7
+KNIGHT_OFFSET = [30, 30]
+KNIGHT_DATA = [KNIGHT_SIZE_W, WIZARD_SIZE_H, KNIGHT_SCALE, KNIGHT_OFFSET]
 
 # загрузка фона
 
 # загрузка таблиц
-knight_sheet = [pygame.image.load("assets/Evil Wizard/Sprites/Idle.png").convert_alpha(),
-                pygame.image.load("assets/Evil Wizard/Sprites/Move.png").convert_alpha(),
-                pygame.image.load("assets/Evil Wizard/Sprites/Idle.png").convert_alpha(),
-                pygame.image.load("assets/Evil Wizard/Sprites/Attack.png").convert_alpha(),
-                pygame.image.load("assets/Evil Wizard/Sprites/Attack.png").convert_alpha(),
-                pygame.image.load("assets/Evil Wizard/Sprites/Take Hit.png").convert_alpha(),
-                pygame.image.load("assets/Evil Wizard/Sprites/Death.png").convert_alpha()]  # пояснение в readme
-wizard_sheet = [pygame.image.load("assets/Hero Knight/Sprites/Idle.png").convert_alpha(),
-                pygame.image.load("assets/Hero Knight/Sprites/Run.png").convert_alpha(),
-                pygame.image.load("assets/Hero Knight/Sprites/Jump.png").convert_alpha(),
-                pygame.image.load("assets/Hero Knight/Sprites/Attack1.png").convert_alpha(),
-                pygame.image.load("assets/Hero Knight/Sprites/Attack2.png").convert_alpha(),
-                pygame.image.load("assets/Hero Knight/Sprites/Take Hit.png").convert_alpha(),
-                pygame.image.load("assets/Hero Knight/Sprites/Death.png").convert_alpha()]  # пояснение в readme
+knight_sheet = pygame.image.load("assets/Renegade.png").convert_alpha()  # пояснение в readme
+wizard_sheet = pygame.image.load("assets/Vigilante.png").convert_alpha()  # пояснение в readme
 
 # определение количества steps в каждой анимации
-KNIGHT_ANIMATION_STEPS = [8, 8, 8, 8, 8, 4, 5]
-WIZARD_ANIMATION_STEPS = [11, 8, 3, 7, 7, 4, 11]
+KNIGHT_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
+WIZARD_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 
 # создание двух экземпляров бойцов
 fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
@@ -90,6 +83,8 @@ def main_game():
             run = False
 
         # обработчик событий
+        if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+            pause_menu.main()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
