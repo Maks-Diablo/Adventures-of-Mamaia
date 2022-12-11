@@ -24,7 +24,7 @@ class Fighter_bot():
         self.attack_cooldown = 0
         self.run_cooldown = 0
         self.hit = False
-        self.health = 10
+        self.health = 30
         self.alive = True
         self.health_damage = 10
 

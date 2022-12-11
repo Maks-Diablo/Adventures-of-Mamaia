@@ -1,5 +1,6 @@
 __all__ = ['main']
 
+import configparser
 from random import randrange
 from typing import Tuple, Any, Optional, List
 
@@ -9,6 +10,12 @@ from pygame_menu.examples import create_example_window
 
 import main as main_loop
 import variables
+
+config = configparser.ConfigParser()
+config.read("fighter.ini")
+config.set("fighter", "health", "100")
+with open("fighter.ini", "w") as config_file:
+    config.write(config_file)
 
 # Constants and global variables
 ABOUT = [f'Game {"v11"}',
@@ -156,8 +163,6 @@ def main(test: bool = False) -> None:
         pygame.display.flip()
 
         # At first loop returns
-        if test:
-            break
 
 
 if __name__ == '__main__':

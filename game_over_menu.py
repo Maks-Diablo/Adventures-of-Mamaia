@@ -44,13 +44,13 @@ def start_the_game():
         test = True
 
 
-background_image = pygame_menu.BaseImage(
-    image_path="assets/bg.png"
-)
-
-
-def main_background() -> None:
-    background_image.draw(surface)
+# background_image = pygame_menu.BaseImage(
+#     image_path="assets/bg.png"
+# )
+#
+#
+# def main_background() -> None:
+#     background_image.draw(surface)
 
 
 WINDOW_SIZE = (variables.SCREEN_WIDTH, variables.SCREEN_HEIGHT)
@@ -65,7 +65,7 @@ def main() -> None:
     menu = pygame_menu.Menu('Welcome', variables.SCREEN_WIDTH, variables.SCREEN_HEIGHT,
                             theme=theme)
 
-    menu.add.button('Play', start_the_game)
+    menu.add.button('Restart', start_the_game)
     menu.add.button('Quit', pygame_menu.events.EXIT)
 
     clock = pygame.time.Clock()
@@ -77,7 +77,7 @@ def main() -> None:
         clock.tick(FPS)
 
         # Paint background
-        main_background()
+        #main_background()
 
         # Application events
         events = pygame.event.get()
@@ -87,7 +87,7 @@ def main() -> None:
 
         # Main menu
         if menu.is_enabled():
-            menu.mainloop(surface, main_background, disable_loop=True, fps_limit=FPS)
+            menu.mainloop(surface, disable_loop=True, fps_limit=FPS)
 
         # Flip surface
         pygame.display.flip()

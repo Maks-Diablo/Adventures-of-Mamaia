@@ -1,3 +1,4 @@
+import configparser
 import random
 
 import pygame
@@ -46,8 +47,14 @@ KNIGHT_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 WIZARD_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 
 # создание двух экземпляров бойцов
-fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
-fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+fighter_1 = 0
+fighter_2 = 0
+
+
+def create_fighters():
+    global fighter_1, fighter_2
+    fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
+    fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
 
 
 def main_game():
@@ -59,7 +66,7 @@ def main_game():
         Func.draw_bg(level_game)
         # показать здоровье игрока
         Func.draw_health_bar(fighter_1.health, 20, 20)
-        Func.draw_health_bar(fighter_2.health, 580, 20)
+        # Func.draw_health_bar(fighter_2.health, 580, 20)
 
         rand_protection = random.randint(0, 3)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
 
@@ -75,9 +82,21 @@ def main_game():
         fighter_1.draw(screen)
         fighter_2.draw(screen)
 
+        # проверка на смерть героя
+        if fighter_1.alive == False:
+            # game_over_menu.main()
+            Func.draw_game_over(level_game)
+            # break
+
         # проверка перехода на след уровень
         if fighter_2.alive == False and fighter_1.rect.right > SCREEN_WIDTH:
             LEVEL = 1
+            config = configparser.ConfigParser()
+            config.read("fighter.ini")
+            config.set("fighter", "health", str(fighter_1.health))
+            config.set("fighter", "level", "3")
+            with open("fighter.ini", "w") as config_file:
+                config.write(config_file)
             run = False
 
         # обработчик событий
@@ -86,5 +105,6 @@ def main_game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                LEVEL = 1
 
         pygame.display.update()

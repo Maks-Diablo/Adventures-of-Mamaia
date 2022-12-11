@@ -45,13 +45,21 @@ wizard_sheet = pygame.image.load("assets/Vigilante.png").convert_alpha()  # по
 KNIGHT_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 WIZARD_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 
-# создание двух экземпляров бойцов
-fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
-fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
-fighter_3 = Fighter_bot(500, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+fighter_1 = 0
+fighter_2 = 0
+fighter_3 = 0
+
+
+def create_fighters():
+    global fighter_1, fighter_2, fighter_3
+    fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
+    fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+    fighter_3 = Fighter_bot(500, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
 
 
 def main_game():
+    # создание двух экземпляров бойцов
+
     # игровой цикл
     run = True
     while run:
@@ -60,7 +68,7 @@ def main_game():
         Func.draw_bg(level_game)
         # показать здоровье игрока
         Func.draw_health_bar(fighter_1.health, 20, 20)
-        Func.draw_health_bar(fighter_2.health, 580, 20)
+        # Func.draw_health_bar(fighter_2.health, 580, 20)
 
         rand_protection = random.randint(0, 3)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
 
@@ -78,6 +86,13 @@ def main_game():
         fighter_1.draw_for2(screen)
         fighter_2.draw(screen)
         fighter_3.draw(screen)
+
+        # проверка на смерть героя
+        if fighter_1.alive == False:
+            # game_over_menu.main()
+            Func.draw_game_over(level_game)
+            return
+            # break
 
         # проверка перехода на след уровень
         if fighter_2.alive == False and fighter_3.alive == False and fighter_1.rect.right > SCREEN_WIDTH:

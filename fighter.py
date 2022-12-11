@@ -1,8 +1,20 @@
+import configparser
+
 import pygame
 
 
+# x = config.get("q", "w")
+# print(x)
+# config.set("q", "w", "1")
+# y = config.get("q", "w")
+# print(y)
+# with open("fighter.ini", "w") as config_file:
+#     config.write(config_file)
+
 class Fighter():
     def __init__(self, x, y, flip, data, sprite_sheet, animation_steps):
+        self.config = configparser.ConfigParser()
+        self.config.read("fighter.ini")
         self.size_w = data[0]
         self.size_h = data[1]
         self.image_scale = data[2]
@@ -21,9 +33,9 @@ class Fighter():
         self.attack_type = 0
         self.attack_cooldown = 0
         self.hit = False
-        self.health = 1000
+        self.health = int(self.config.get("fighter", "health"))
         self.alive = True
-        self.health_damage = 10
+        self.health_damage = 100
 
         # проверка уровня
         self.level = 0  # 0 - игра, 1 - пройден
@@ -114,6 +126,12 @@ class Fighter():
         self.rect.y += dy
 
     def update(self):
+        # запись в лог health
+        self.config.set("fighter", "health", str(self.health))
+
+        with open("fighter.ini", "w") as config_file:
+            self.config.write(config_file)
+
         # проверка какая анимация
         if self.health <= 0:
             self.health = 0
@@ -183,8 +201,8 @@ class Fighter():
         surface.blit(img, (
             self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
-
     """Для двух ботов"""
+
     def move_for2(self, screen_width, screen_height, surface, target1, target2):
         SPEED = 10
         GRAVITY = 2

@@ -1,3 +1,4 @@
+import configparser
 import random
 
 import pygame
@@ -41,15 +42,18 @@ KNIGHT_DATA = [KNIGHT_SIZE_W, WIZARD_SIZE_H, KNIGHT_SCALE, KNIGHT_OFFSET]
 
 # загрузка таблиц
 knight_sheet = pygame.image.load("assets/Renegade.png").convert_alpha()  # пояснение в readme
-wizard_sheet = pygame.image.load("assets/Vigilante.png").convert_alpha()  # пояснение в readme
+wizard_sheet = pygame.image.load("assets/Ranger.png").convert_alpha()  # пояснение в readme
 
 # определение количества steps в каждой анимации
 KNIGHT_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 WIZARD_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 
+
 # создание двух экземпляров бойцов
-fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
-fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+def create_fighters():
+    global fighter_1, fighter_2
+    fighter_1 = Fighter(200, 350, False, KNIGHT_DATA, knight_sheet, KNIGHT_ANIMATION_STEPS)
+    fighter_2 = Fighter_bot(700, 350, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
 
 
 def main_game():
@@ -61,7 +65,7 @@ def main_game():
         Func.draw_bg(level_game)
         # показать здоровье игрока
         Func.draw_health_bar(fighter_1.health, 20, 20)
-        Func.draw_health_bar(fighter_2.health, 580, 20)
+        # Func.draw_health_bar(fighter_2.health, 580, 20)
 
         rand_protection = random.randint(0, 3)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
 
@@ -77,14 +81,29 @@ def main_game():
         fighter_1.draw(screen)
         fighter_2.draw(screen)
 
+        # проверка на смерть героя
+        if fighter_1.alive == False:
+            # game_over_menu.main()
+            Func.draw_game_over(level_game)
+            main_game()
+            # break
+
         # проверка перехода на след уровень
         if fighter_2.alive == False and fighter_1.rect.right > SCREEN_WIDTH:
             LEVEL = 1
+
+            config = configparser.ConfigParser()
+            config.read("fighter.ini")
+            config.set("fighter", "health", str(fighter_1.health))
+            config.set("fighter", "level", "2")
+            with open("fighter.ini", "w") as config_file:
+                config.write(config_file)
             run = False
 
         # обработчик событий
         if pygame.key.get_pressed()[pygame.K_ESCAPE]:
             pause_menu.main()
+            break
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
