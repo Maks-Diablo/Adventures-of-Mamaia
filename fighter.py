@@ -40,6 +40,9 @@ class Fighter():
         # проверка уровня
         self.level = 0  # 0 - игра, 1 - пройден
 
+        # ульта
+        self.ultra_aleksis = 0 #int(self.config.get("fighter", "ultra"))
+
     def load_images(self, sprite_sheet, animation_steps):
         # extract images from spritesheet
         animation_list = []
@@ -126,6 +129,14 @@ class Fighter():
         self.rect.y += dy
 
     def update(self):
+        # запись изменения ульты
+        # config = configparser.ConfigParser()
+        # config.read("fighter.ini")
+        # if int(config.get("fighter", "ultra")) != self.ultra_aleksis:
+        #     config.set("fighter", "ultra", str(self.ultra_aleksis))
+        #     with open("fighter.ini", "w") as config_file:
+        #         config.write(config_file)
+
         # запись в лог health
         self.config.set("fighter", "health", str(self.health))
 

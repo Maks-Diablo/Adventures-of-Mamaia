@@ -5,13 +5,15 @@ import pygame
 import Level1
 import Level2
 import Level3
-
+import video
 
 def main():
     config = configparser.ConfigParser()
     config.read("fighter.ini")
     config.set("fighter", "health", "200")
     config.set("fighter", "level", "1")
+    #config.set("fighter", "ultra", "0")
+
     with open("fighter.ini", "w") as config_file:
         config.write(config_file)
 
@@ -20,6 +22,7 @@ def main():
     Level = int(config.get("fighter", "level"))
 
     if Level == 1:
+        #video.main()
         Level1.create_fighters()
         Level1.main_game()
 

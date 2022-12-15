@@ -67,10 +67,26 @@ class Func:
             health_scale = pygame.transform.scale(health_bar_1,
                                                   (health_bar_1.get_width() * 3, health_bar_1.get_height() * 3))
             if i >= 10:
-                screen.blit(health_scale, (health_bar_1.get_width() * 2 * (i % 10) + 15, health_bar_1.get_height() * 3))
+                screen.blit(health_scale, (health_bar_1.get_width() * 2 * (i % 10) + 15 + x, health_bar_1.get_height() * 3))
             else:
-                screen.blit(health_scale, (health_bar_1.get_width() * 2 * i + 15, health_bar_1.get_height()))
+                screen.blit(health_scale, (health_bar_1.get_width() * 2 * i + 15 + x, health_bar_1.get_height()))
 
         # pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
         # pygame.draw.rect(screen, RED, (x, y, 400, 30))
         # pygame.draw.rect(screen, YELLOW, (x, y, 400 * ratio, 30))
+
+    # функция для рисования полосы ульты
+    def draw_ultra_bar(ultra, x, y):
+        for i in range(3):
+            ultra_bar_1 = pygame.image.load("assets/beer_1.png").convert_alpha()  # пояснение в readme
+            ultra_scale1 = pygame.transform.scale(ultra_bar_1,
+                                                  (ultra_bar_1.get_width() * 2.5, ultra_bar_1.get_height() * 2.5))
+            ultra_bar_0 = pygame.image.load("assets/beer_0.png").convert_alpha()  # пояснение в readme
+            ultra_scale0 = pygame.transform.scale(ultra_bar_0,
+                                                  (ultra_bar_0.get_width() * 2.5, ultra_bar_0.get_height() * 2.5))
+            if i < ultra:
+                screen.blit(ultra_scale1,
+                            (ultra_bar_1.get_width() * 1.5 * (i % 10) + x, ultra_bar_1.get_height() * 3))
+            else:
+                screen.blit(ultra_scale0,
+                            (ultra_bar_0.get_width() * 1.5 * (i % 10) + x, ultra_bar_0.get_height() * 3))
