@@ -13,12 +13,6 @@ import variables
 
 FPS = 60
 
-
-def set_difficulty(value, difficulty):
-    # Do the job here !
-    pass
-
-
 test = False
 
 
@@ -33,15 +27,11 @@ def start_the_game():
         Level1.main_game()
         test = True
 
-    # config.read("fighter.ini")
-    # Level = int(config.get("fighter", "level"))
     if Level == 2:
         Level2.main_game()
 
         test = True
 
-    # config.read("fighter.ini")
-    # Level = int(config.get("fighter", "level"))
     if Level == 3:
         Level3.main_game()
         test = True
@@ -52,7 +42,7 @@ def start_the_game():
 
 
 background_image = pygame_menu.BaseImage(
-    image_path="assets/bg.png"
+    image_path="assets/backgrounds/bg.png"
 )
 
 

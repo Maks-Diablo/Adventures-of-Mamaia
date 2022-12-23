@@ -36,8 +36,8 @@ class Aleksis_bot():
         self.attack_run = False
         self.ultra_attack = 0
 
+        # проверка звука
         self.sound_punch = False
-
 
     def load_images(self, sprite_sheet, animation_steps):
         # extract images from spritesheet
@@ -67,7 +67,6 @@ class Aleksis_bot():
 
         # может выполнять действия только если не атакует
         if self.attacking == False and not self.attack_run:
-
             # movement
             attacking_rect = 80
             if self.rect.x + attacking_rect != self.rect_fighter.x and self.run_cooldown == 0:
@@ -103,11 +102,10 @@ class Aleksis_bot():
                     self.health_damage = 20
 
                 self.attack_run = True
-
         else:
             # movement
             self.running = True
-            dx = -SPEED*4
+            dx = -SPEED * 4
 
         # добавление гравитации
         self.vel_y += GRAVITY
@@ -160,12 +158,15 @@ class Aleksis_bot():
             self.update_action(0)  # Idle
 
         animation_cooldown = 115
+
         # update image
         self.image = self.animation_list[self.action][self.frame_index]
+
         # проверка прошло ли достаточно времени с момента последнего обновления
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
+
         # проврека закончилась ли анимация
         if self.frame_index >= len(self.animation_list[self.action]):
             # если герой умер последний кадр анимации смерти
@@ -195,7 +196,6 @@ class Aleksis_bot():
             if attacking_rect.colliderect(target.rect):
                 target.health -= self.health_damage
                 target.hit = True
-            pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
     def update_action(self, new_action):
         if new_action != self.action:
@@ -206,7 +206,5 @@ class Aleksis_bot():
 
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
-        # pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (
             self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
-

@@ -49,9 +49,9 @@ ALEKSIS_DATA = [ALEKSIS_SIZE_W, WIZARD_SIZE_H, ALEKSIS_SCALE, ALEKSIS_OFFSET]
 # загрузка фона
 
 # загрузка таблиц
-mamai_sheet = pygame.image.load("assets/Renegade.png").convert_alpha()  # пояснение в readme
-wizard_sheet = pygame.image.load("assets/Agent.png").convert_alpha()  # пояснение в readme
-aleksis_sheet = pygame.image.load("assets/Vigilante.png").convert_alpha()  # пояснение в readme
+mamai_sheet = pygame.image.load("assets/spritesheets/Renegade.png").convert_alpha()  # пояснение в readme
+wizard_sheet = pygame.image.load("assets/spritesheets/Agent.png").convert_alpha()  # пояснение в readme
+aleksis_sheet = pygame.image.load("assets/spritesheets/Vigilante.png").convert_alpha()  # пояснение в readme
 
 # определение количества steps в каждой анимации
 MAMAI_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
@@ -62,8 +62,10 @@ ALEKSIS_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 # создание экземпляров бойцов
 def create_fighters():
     global fighter_1, fighter_2, fighter_3
+    health = Func.change_difficulty(1)
+
     fighter_1 = Fighter(200, 794, False, MAMAI_DATA, mamai_sheet, MAMAI_ANIMATION_STEPS)
-    fighter_2 = Fighter_bot(700, 794, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+    fighter_2 = Fighter_bot(700, 794, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, health)
     fighter_3 = Aleksis_bot(-10, 794, False, ALEKSIS_DATA, aleksis_sheet, ALEKSIS_ANIMATION_STEPS)
     fighter_3.attack_run = True
 
@@ -79,21 +81,20 @@ def main_game():
     bot_sound_punch = variables.bot_sound_punch
     bot_sound_hit = variables.bot_sound_hit
     aleksis_sound = variables.aleksis_sound
-
-    fighter_2.health = 400
-
     aleksis_sound_bool = True
     aleksis = False
     timing_ultra = time.time()
+
     # игровой цикл
     run = True
     while run:
         clock.tick(FPS)  # задержка
+
         # отрисовка фона
         Func.draw_bg(level_game)
+
         # показать здоровье игрока
         Func.draw_health_bar(fighter_1.health, 0, 0)
-        # Func.draw_health_bar(fighter_2.health, 580, 20)
 
         # показать уровень ульты игрока
         Func.draw_ultra_bar(fighter_1.ultra_aleksis, 0, 0)
@@ -103,11 +104,11 @@ def main_game():
             timing_ultra = time.time()
             fighter_1.ultra_aleksis += 1
 
-        rand_protection = random.randint(0, 3)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
+        rand_protection = random.randint(0, 3)
 
         # передвежение персонажей
         fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, rand_protection)
+        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1)
         if aleksis == True:
             fighter_3.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, rand_protection)
 
@@ -164,7 +165,7 @@ def main_game():
             aleksis = False
 
         # проверка перехода на след уровень
-        if fighter_2.alive == False: #and fighter_1.rect.right > SCREEN_WIDTH:
+        if fighter_2.alive == False:  # and fighter_1.rect.right > SCREEN_WIDTH:
             LEVEL = 1
             config = configparser.ConfigParser()
             config.read("fighter.ini")

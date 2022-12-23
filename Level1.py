@@ -50,9 +50,9 @@ ALEKSIS_DATA = [ALEKSIS_SIZE_W, WIZARD_SIZE_H, ALEKSIS_SCALE, ALEKSIS_OFFSET]
 # загрузка фона
 
 # загрузка таблиц
-mamai_sheet = pygame.image.load("assets/Renegade.png").convert_alpha()  # пояснение в readme
-wizard_sheet = pygame.image.load("assets/Ranger.png").convert_alpha()  # пояснение в readme
-aleksis_sheet = pygame.image.load("assets/Vigilante.png").convert_alpha()  # пояснение в readme
+mamai_sheet = pygame.image.load("assets/spritesheets/Renegade.png").convert_alpha()  # пояснение в readme
+wizard_sheet = pygame.image.load("assets/spritesheets/Ranger.png").convert_alpha()  # пояснение в readme
+aleksis_sheet = pygame.image.load("assets/spritesheets/Vigilante.png").convert_alpha()  # пояснение в readme
 
 # определение количества steps в каждой анимации
 MAMAI_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
@@ -63,8 +63,10 @@ ALEKSIS_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 # создание экземпляров бойцов
 def create_fighters():
     global fighter_1, fighter_2, fighter_3
+    health = Func.change_difficulty(0)
+
     fighter_1 = Fighter(200, 794, False, MAMAI_DATA, mamai_sheet, MAMAI_ANIMATION_STEPS)
-    fighter_2 = Fighter_bot(700, 794, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+    fighter_2 = Fighter_bot(700, 794, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, health)
     fighter_3 = Aleksis_bot(-10, 794, False, ALEKSIS_DATA, aleksis_sheet, ALEKSIS_ANIMATION_STEPS)
     fighter_3.attack_run = True
     variables.video_bool = True
@@ -81,16 +83,20 @@ def main_game():
     bot_sound_punch = variables.bot_sound_punch
     bot_sound_hit = variables.bot_sound_hit
     aleksis_sound = variables.aleksis_sound
-
     aleksis_sound_bool = True
+
     aleksis = False
+
     timing_ultra = time.time()
+
     # игровой цикл
     run = True
     while run:
         clock.tick(FPS)  # задержка
+
         # отрисовка фона
         Func.draw_bg(level_game)
+
         # показать здоровье игрока
         Func.draw_health_bar(fighter_1.health, 0, 0)
 
@@ -102,11 +108,11 @@ def main_game():
             timing_ultra = time.time()
             fighter_1.ultra_aleksis += 1
 
-        rand_protection = random.randint(0, 3)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
+        rand_protection = random.randint(0, 3)
 
         # передвежение персонажей
         fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, rand_protection)
+        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1)
         if aleksis == True:
             fighter_3.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, rand_protection)
 
@@ -155,7 +161,6 @@ def main_game():
 
         # проверка на смерть героя
         if fighter_1.alive == False:
-            # game_over_menu.main()
             Func.draw_game_over(level_game)
             main_game()
 
@@ -166,7 +171,7 @@ def main_game():
         if fighter_2.alive == False and variables.video_bool:
             if time.time() - timing_ultra > 5.0:
                 timing_ultra = time.time()
-                clip = VideoFileClip('assets/video/cast-scene-level1_2(0).mp4')
+                clip = VideoFileClip('assets/video/cut-scene-level1_2(0).mp4')
                 clipresized = clip.resize(height=variables.SCREEN_HEIGHT)
                 clipresized.preview()
                 variables.video_bool = False

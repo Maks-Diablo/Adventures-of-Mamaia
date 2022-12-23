@@ -51,10 +51,10 @@ ALEKSIS_OFFSET = [30, 30]
 ALEKSIS_DATA = [ALEKSIS_SIZE_W, SOLDIER_SIZE_H, ALEKSIS_SCALE, ALEKSIS_OFFSET]
 
 # загрузка таблиц
-mamai_sheet = pygame.image.load("assets/Renegade.png").convert_alpha()  # пояснение в readme
-soldier_sheet = pygame.image.load("assets/Soldier2.png").convert_alpha()  # пояснение в readme
-bot_sheet = pygame.image.load("assets/Soldier2_bot.png").convert_alpha()  # пояснение в readme
-aleksis_sheet = pygame.image.load("assets/Vigilante.png").convert_alpha()  # пояснение в readme
+mamai_sheet = pygame.image.load("assets/spritesheets/Renegade.png").convert_alpha()  # пояснение в readme
+soldier_sheet = pygame.image.load("assets/spritesheets/Soldier2.png").convert_alpha()  # пояснение в readme
+bot_sheet = pygame.image.load("assets/spritesheets/Soldier2_bot.png").convert_alpha()  # пояснение в readme
+aleksis_sheet = pygame.image.load("assets/spritesheets/Vigilante.png").convert_alpha()  # пояснение в readme
 
 # определение количества steps в каждой анимации
 MAMAI_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
@@ -63,18 +63,14 @@ BOT_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 ALEKSIS_ANIMATION_STEPS = [4, 4, 4, 1, 1, 1, 1]
 
 
-# создание экземпляров бойцов
-def create_bots():
-    global fighter_bot
-    fighter_bot = Fighter_bot(600, 794, True, BOT_DATA, bot_sheet, BOT_ANIMATION_STEPS)
-
-
 def create_fighters():
     global fighter_mamai, fighter_soldier_bot, fighter_aleksis, fighter_bot1, fighter_bot2
+    health = Func.change_difficulty(0)
+
     fighter_mamai = Fighter(200, 794, False, MAMAI_DATA, mamai_sheet, MAMAI_ANIMATION_STEPS)
-    fighter_soldier_bot = Fighter_bot(700, 794, True, SOLDIER_DATA, soldier_sheet, SOLDIER_ANIMATION_STEPS)
-    fighter_bot1 = Fighter_bot(500, 794, True, BOT_DATA, bot_sheet, BOT_ANIMATION_STEPS)
-    fighter_bot2 = Fighter_bot(600, 794, True, BOT_DATA, bot_sheet, BOT_ANIMATION_STEPS)
+    fighter_soldier_bot = Fighter_bot(700, 794, True, SOLDIER_DATA, soldier_sheet, SOLDIER_ANIMATION_STEPS, health)
+    fighter_bot1 = Fighter_bot(500, 794, True, BOT_DATA, bot_sheet, BOT_ANIMATION_STEPS, health)
+    fighter_bot2 = Fighter_bot(600, 794, True, BOT_DATA, bot_sheet, BOT_ANIMATION_STEPS, health)
     fighter_aleksis = Aleksis_bot(-10, 794, False, ALEKSIS_DATA, aleksis_sheet, ALEKSIS_ANIMATION_STEPS)
     fighter_aleksis.attack_run = True
 
@@ -103,8 +99,10 @@ def main_game():
     run = True
     while run:
         clock.tick(FPS)  # задержка
+
         # отрисовка фона
         Func.draw_bg(level_game)
+
         # показать здоровье игрока
         Func.draw_health_bar(fighter_mamai.health, 0, 0)
 
@@ -127,7 +125,7 @@ def main_game():
 
         # передвежение персонажей
         fighter_mamai.move_for3(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_soldier_bot, fighter_bot1, fighter_bot2)
-        fighter_soldier_bot.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_mamai, rand_protection)
+        fighter_soldier_bot.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_mamai)
 
         if aleksis == True:
             fighters_list_alive = [fighter_soldier_bot, fighter_bot1, fighter_bot2]
@@ -149,18 +147,11 @@ def main_game():
                 target = random.choice(fighters_list_alive)
             except:
                 target = fighter_soldier_bot
-            # aleksis_ultra = 0
-            # if fighter_mamai.ultra_aleksis == (1 or 2):
-            #     aleksis_ultra = 1
-            #     print(1)
-            # elif fighter_mamai.ultra_aleksis == 3:
-            #     aleksis_ultra = 0
-            #     print(2)
 
             fighter_aleksis.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, target, 2)
 
-        fighter_bot1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_mamai, rand_protection)
-        fighter_bot2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_mamai, rand_protection)
+        fighter_bot1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_mamai)
+        fighter_bot2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_mamai)
 
         # update fighters
         mamai_punch_sound = pygame.mixer.Sound(random.choice(mamai_sound_punch))
@@ -231,7 +222,7 @@ def main_game():
             bot2 = 2
             fighter_bot2.alive = True
             fighter_bot2.health = 10
-            fighter_bot1.rect.left = 1930
+            fighter_bot2.rect.left = 1930
 
         # проверка на смерть героя
         if fighter_mamai.alive == False:
@@ -241,7 +232,7 @@ def main_game():
             aleksis = False
 
         # проверка перехода на след уровень
-        if fighter_bot2.alive == False and fighter_bot2.alive == False and fighter_soldier_bot.alive == False and fighter_mamai.rect.right > SCREEN_WIDTH:
+        if fighter_bot1.alive == False and fighter_bot2.alive == False and fighter_soldier_bot.alive == False and fighter_mamai.rect.right > SCREEN_WIDTH:
             LEVEL = 1
             config = configparser.ConfigParser()
             config.read("fighter.ini")

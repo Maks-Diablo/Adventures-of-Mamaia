@@ -21,6 +21,7 @@ pygame.mixer.music.play(-1, 0.0, 5000)
 config = configparser.ConfigParser()
 config.read("fighter.ini")
 config.set("fighter", "health", "100")
+config.set("fighter", "difficulty", "0")
 with open("fighter.ini", "w") as config_file:
     config.write(config_file)
 
@@ -41,6 +42,11 @@ def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     selected, index = value
     print(f'Selected difficulty: "{selected}" ({difficulty}) at index {index}')
     DIFFICULTY[0] = difficulty
+    config = configparser.ConfigParser()
+    config.read("fighter.ini")
+    config.set("fighter", "difficulty", str(index))
+    with open("fighter.ini", "w") as config_file:
+        config.write(config_file)
 
 
 def random_color() -> Tuple[int, int, int]:
@@ -52,7 +58,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
 
 
 background_image = pygame_menu.BaseImage(
-    image_path="assets/bg.png"
+    image_path="assets/backgrounds/bg.png"
 )
 
 
@@ -103,9 +109,9 @@ def main(test: bool = False) -> None:
                          DIFFICULTY,
                          pygame.font.Font(pygame_menu.font.FONT_FRANCHISE, 30))
     play_menu.add.selector('Select difficulty ',
-                           [('1 - Easy', 'EASY'),
-                            ('2 - Medium', 'MEDIUM'),
-                            ('3 - Hard', 'HARD')],
+                           [('2 - Medium', 'MEDIUM'),
+                            ('3 - Hard', 'HARD'),
+                            ('1 - Easy', 'EASY')],
                            onchange=change_difficulty,
                            selector_id='select_difficulty')
     play_menu.add.button('Return to main menu', pygame_menu.events.BACK)

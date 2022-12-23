@@ -9,11 +9,12 @@ import Level4
 import main_menu
 import video
 
+
 def main():
     config = configparser.ConfigParser()
     config.read("fighter.ini")
     config.set("fighter", "health", "200")
-    config.set("fighter", "level", "4")
+    config.set("fighter", "level", "2")
     config.set("fighter", "ultra", "3")
 
     with open("fighter.ini", "w") as config_file:
@@ -26,6 +27,7 @@ def main():
 
     if Level == 1:
         video.level_1_credits()
+        video.level_1_cut_scene()
         Level1.create_fighters()
         Level1.main_game()
 
@@ -34,8 +36,8 @@ def main():
 
     if Level == 2:
         video.level_2_credits()
+        video.level_2_cut_scene()
         Level2.create_fighters()
-        Level2.create_bots()
         Level2.main_game()
 
     config.read("fighter.ini")
@@ -43,6 +45,7 @@ def main():
 
     if Level == 3:
         video.level_3_credits()
+        video.level_3_cut_scene()
         Level3.create_fighters()
         Level3.main_game()
 
@@ -51,6 +54,7 @@ def main():
 
     if Level == 4:
         video.level_4_credits()
+        video.level_4_cut_scene()
         Level4.create_fighters()
         Level4.main_game()
 

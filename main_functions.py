@@ -67,13 +67,10 @@ class Func:
             health_scale = pygame.transform.scale(health_bar_1,
                                                   (health_bar_1.get_width() * 3, health_bar_1.get_height() * 3))
             if i >= 10:
-                screen.blit(health_scale, (health_bar_1.get_width() * 2 * (i % 10) + 15 + x, health_bar_1.get_height() * 3))
+                screen.blit(health_scale,
+                            (health_bar_1.get_width() * 2 * (i % 10) + 15 + x, health_bar_1.get_height() * 3))
             else:
                 screen.blit(health_scale, (health_bar_1.get_width() * 2 * i + 15 + x, health_bar_1.get_height()))
-
-        # pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
-        # pygame.draw.rect(screen, RED, (x, y, 400, 30))
-        # pygame.draw.rect(screen, YELLOW, (x, y, 400 * ratio, 30))
 
     # функция для рисования полосы ульты
     def draw_ultra_bar(ultra, x, y):
@@ -91,3 +88,23 @@ class Func:
                 screen.blit(ultra_scale0,
                             (ultra_bar_0.get_width() * 1.5 * (i % 10) + x, ultra_bar_0.get_height() * 3))
 
+    @staticmethod
+    def change_difficulty(type):
+        config = configparser.ConfigParser()
+        config.read("fighter.ini")
+        difficulty = config.get("fighter", "difficulty")
+        if type == 0:
+            if int(difficulty) == 0:
+                health = 100
+            if int(difficulty) == 2:
+                health = 10
+            if int(difficulty) == 1:
+                health = 150
+        elif type == 1:
+            if int(difficulty) == 0:
+                health = 400
+            if int(difficulty) == 2:
+                health = 300
+            if int(difficulty) == 1:
+                health = 500
+        return health

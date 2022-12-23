@@ -2,8 +2,9 @@ import random
 
 import pygame
 
+
 class Fighter_bot():
-    def __init__(self, x, y, flip, data, sprite_sheet, animation_steps):
+    def __init__(self, x, y, flip, data, sprite_sheet, animation_steps, health):
         self.size_w = data[0]
         self.size_h = data[1]
         self.image_scale = data[2]
@@ -23,16 +24,16 @@ class Fighter_bot():
         self.attack_cooldown = 0
         self.run_cooldown = 0
         self.hit = False
-        self.health = 100
+        self.health = health
         self.alive = True
         self.health_damage = 10
 
         # проверка уровня
         self.level = 0  # 0 - игра, 1 - пройден
 
+        # проверка звука
         self.sound_hit = False
         self.sound_punch = False
-
 
     def load_images(self, sprite_sheet, animation_steps):
         # extract images from spritesheet
@@ -46,7 +47,7 @@ class Fighter_bot():
             animation_list.append(temp_img_list)
         return animation_list
 
-    def move(self, screen_width, screen_height, surface, target, rand_protection):
+    def move(self, screen_width, screen_height, surface, target):
         SPEED = 5
         GRAVITY = 2
         dx = 0
@@ -59,26 +60,6 @@ class Fighter_bot():
         self.attacking_fighter = target.attacking
         key = pygame.key.get_pressed()
         rand_attack_type = random.randint(0, 1)
-
-        # защита от атаки
-        # if self.attacking_fighter == True:
-        #     #rand_protection = random.randint(0, 1)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
-        #     print(rand_protection)
-        #     if rand_protection == 0:  # ничего
-        #         pass
-        #     elif rand_protection == 1: #прыжок
-        #         if self.jump == False:
-        #             self.vel_y = -30
-        #             self.jump = True
-        #     elif rand_protection == 2: #сдвин
-        #         dx = 4*SPEED
-        #         self.running = True
-        #     elif rand_protection == 3: #сдвиг с прыжком
-        #         if self.jump == False:
-        #             self.vel_y = -30
-        #             self.jump = True
-        #         dx = 4 * SPEED
-        #         self.running = True
 
         # может выполнять действия только если не атакует
         if self.attacking == False and self.alive == True:
@@ -152,13 +133,11 @@ class Fighter_bot():
             self.update_action(6)  # Death
         elif self.hit == True:
             self.update_action(5)
-
         elif self.attacking == True:
             if self.attack_type == 1:
                 self.update_action(3)  # Attack1
             elif self.attack_type == 2:
                 self.update_action(4)  # Attack2
-            #punch_sound.play(-1)
         elif self.jump == True:
             self.update_action(2)  # Jump
         elif self.running == True:
@@ -167,12 +146,15 @@ class Fighter_bot():
             self.update_action(0)  # Idle
 
         animation_cooldown = 115
+
         # update image
         self.image = self.animation_list[self.action][self.frame_index]
+
         # проверка прошло ли достаточно времени с момента последнего обновления
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
+
         # проврека закончилась ли анимация
         if self.frame_index >= len(self.animation_list[self.action]):
             # если герой умер последний кадр анимации смерти
@@ -191,7 +173,6 @@ class Fighter_bot():
                 if self.action == 5:
                     self.hit = False
                     self.sound_hit = True
-
                     # если боец находился в середине атаки тогда атака остановлена
                     self.attacking = False
                     self.attack_cooldown = 20
@@ -205,7 +186,7 @@ class Fighter_bot():
             if attacking_rect.colliderect(target.rect):
                 target.health -= self.health_damage
                 target.hit = True
-            pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
+            # pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
     def update_action(self, new_action):
         if new_action != self.action:
@@ -214,9 +195,7 @@ class Fighter_bot():
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
 
-
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
-        # pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (
             self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))

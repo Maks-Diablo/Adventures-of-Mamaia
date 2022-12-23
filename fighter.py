@@ -3,14 +3,6 @@ import configparser
 import pygame
 
 
-# x = config.get("q", "w")
-# print(x)
-# config.set("q", "w", "1")
-# y = config.get("q", "w")
-# print(y)
-# with open("fighter.ini", "w") as config_file:
-#     config.write(config_file)
-
 class Fighter():
     def __init__(self, x, y, flip, data, sprite_sheet, animation_steps):
         self.config = configparser.ConfigParser()
@@ -40,6 +32,7 @@ class Fighter():
         # проверка уровня
         self.level = 0  # 0 - игра, 1 - пройден
 
+        # проверка звука
         self.sound_hit = False
         self.sound_punch = False
 
@@ -132,11 +125,8 @@ class Fighter():
         self.rect.y += dy
 
     def update(self):
-
-
         # запись в лог health
         self.config.set("fighter", "health", str(self.health))
-
         with open("fighter.ini", "w") as config_file:
             self.config.write(config_file)
 
@@ -160,12 +150,15 @@ class Fighter():
             self.update_action(0)  # Idle
 
         animation_cooldown = 80
+
         # update image
         self.image = self.animation_list[self.action][self.frame_index]
+
         # проверка прошло ли достаточно времени с момента последнего обновления
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
+
         # проврека закончилась ли анимация
         if self.frame_index >= len(self.animation_list[self.action]):
             # если герой умер последний кадр анимации смерти
@@ -180,6 +173,7 @@ class Fighter():
                         self.attack_cooldown = 40
                     elif self.action == 3:
                         self.attack_cooldown = 20  # если была нанесена атака
+
                 if self.action == 5:
                     self.hit = False
                     self.sound_hit = True
@@ -198,18 +192,17 @@ class Fighter():
             if attacking_rect.colliderect(target.rect):
                 target.health -= self.health_damage
                 target.hit = True
-            pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
     def update_action(self, new_action):
         if new_action != self.action:
             self.action = new_action
+
             # обновить настройки анимации
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
 
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
-        # pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (
             self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
@@ -299,9 +292,9 @@ class Fighter():
             if attacking_rect.colliderect(target2.rect):
                 target2.health -= self.health_damage
                 target2.hit = True
-            pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
     """Для трёх ботов"""
+
     def move_for3(self, screen_width, screen_height, surface, target1, target2, target3):
         SPEED = 10
         GRAVITY = 2
@@ -389,5 +382,3 @@ class Fighter():
             if attacking_rect.colliderect(target3.rect):
                 target3.health -= self.health_damage
                 target3.hit = True
-            pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
-
