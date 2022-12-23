@@ -2,7 +2,6 @@ import random
 
 import pygame
 
-
 class Fighter_bot():
     def __init__(self, x, y, flip, data, sprite_sheet, animation_steps):
         self.size_w = data[0]
@@ -24,12 +23,16 @@ class Fighter_bot():
         self.attack_cooldown = 0
         self.run_cooldown = 0
         self.hit = False
-        self.health = 30
+        self.health = 100
         self.alive = True
         self.health_damage = 10
 
         # проверка уровня
         self.level = 0  # 0 - игра, 1 - пройден
+
+        self.sound_hit = False
+        self.sound_punch = False
+
 
     def load_images(self, sprite_sheet, animation_steps):
         # extract images from spritesheet
@@ -149,11 +152,13 @@ class Fighter_bot():
             self.update_action(6)  # Death
         elif self.hit == True:
             self.update_action(5)
+
         elif self.attacking == True:
             if self.attack_type == 1:
                 self.update_action(3)  # Attack1
             elif self.attack_type == 2:
                 self.update_action(4)  # Attack2
+            #punch_sound.play(-1)
         elif self.jump == True:
             self.update_action(2)  # Jump
         elif self.running == True:
@@ -185,6 +190,8 @@ class Fighter_bot():
                 # если была нанесена атака
                 if self.action == 5:
                     self.hit = False
+                    self.sound_hit = True
+
                     # если боец находился в середине атаки тогда атака остановлена
                     self.attacking = False
                     self.attack_cooldown = 20
@@ -192,6 +199,7 @@ class Fighter_bot():
     def attack(self, surface, target):
         if self.attack_cooldown == 0:
             self.attacking = True
+            self.sound_punch = True
             attacking_rect = pygame.Rect(self.rect.centerx - (1 / 3 * self.rect.width * self.flip), self.rect.y,
                                          1 / 3 * self.rect.width, self.rect.height)
             if attacking_rect.colliderect(target.rect):
@@ -205,6 +213,7 @@ class Fighter_bot():
             # обновить настройки анимации
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
+
 
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)

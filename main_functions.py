@@ -90,3 +90,4 @@ class Func:
             else:
                 screen.blit(ultra_scale0,
                             (ultra_bar_0.get_width() * 1.5 * (i % 10) + x, ultra_bar_0.get_height() * 3))
+

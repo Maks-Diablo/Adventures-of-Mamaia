@@ -1,3 +1,4 @@
+import configparser
 import random
 
 import pygame
@@ -33,6 +34,10 @@ class Aleksis_bot():
 
         # проверка удара
         self.attack_run = False
+        self.ultra_attack = 0
+
+        self.sound_punch = False
+
 
     def load_images(self, sprite_sheet, animation_steps):
         # extract images from spritesheet
@@ -46,7 +51,7 @@ class Aleksis_bot():
             animation_list.append(temp_img_list)
         return animation_list
 
-    def move(self, screen_width, screen_height, surface, target, rand_protection):
+    def move(self, screen_width, screen_height, surface, target, ultra):
         SPEED = 5
         GRAVITY = 2
         dx = 0
@@ -60,28 +65,9 @@ class Aleksis_bot():
         key = pygame.key.get_pressed()
         rand_attack_type = random.randint(0, 1)
 
-        # защита от атаки
-        # if self.attacking_fighter == True:
-        #     #rand_protection = random.randint(0, 1)  # не защищается, прыжок, сдвиг назад, прыжок со сдвигом
-        #     print(rand_protection)
-        #     if rand_protection == 0:  # ничего
-        #         pass
-        #     elif rand_protection == 1: #прыжок
-        #         if self.jump == False:
-        #             self.vel_y = -30
-        #             self.jump = True
-        #     elif rand_protection == 2: #сдвин
-        #         dx = 4*SPEED
-        #         self.running = True
-        #     elif rand_protection == 3: #сдвиг с прыжком
-        #         if self.jump == False:
-        #             self.vel_y = -30
-        #             self.jump = True
-        #         dx = 4 * SPEED
-        #         self.running = True
-
         # может выполнять действия только если не атакует
         if self.attacking == False and not self.attack_run:
+
             # movement
             attacking_rect = 80
             if self.rect.x + attacking_rect != self.rect_fighter.x and self.run_cooldown == 0:
@@ -102,16 +88,22 @@ class Aleksis_bot():
                 self.jump = True
 
             # атака
+            config = configparser.ConfigParser()
+            config.read("fighter.ini")
+            ultra = int(config.get("fighter", "ultra"))
+
             if (abs(self.rect.x - self.rect_fighter.x) <= attacking_rect) and (self.alive_fighter == True):
                 self.attack(surface, target)
                 # опредление вида атаки
-                if rand_attack_type:
+                if ultra != 3:
                     self.attack_type = 1
                     self.health_damage = 10
                 else:
                     self.attack_type = 2
                     self.health_damage = 20
+
                 self.attack_run = True
+
         else:
             # movement
             self.running = True
@@ -122,10 +114,6 @@ class Aleksis_bot():
         dy += self.vel_y
 
         # остановка персонажа на краях
-        # if self.rect.left + dx < 0:
-        #     dx = -self.rect.left
-        # if self.rect.right + dx > screen_width:
-        #     dx = screen_width - self.rect.right
         if self.rect.bottom + dy > screen_height - 70:
             self.vel_y = 0
             self.jump = False
@@ -221,3 +209,4 @@ class Aleksis_bot():
         # pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (
             self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
+

@@ -6,10 +6,17 @@ from typing import Tuple, Any, Optional, List
 
 import pygame
 import pygame_menu
+from pygame import mixer
 from pygame_menu.examples import create_example_window
 
 import main as main_loop
 import variables
+
+mixer.init()
+# загрузка музыки
+pygame.mixer.music.load("assets/audio/other/menu.mp3")
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1, 0.0, 5000)
 
 config = configparser.ConfigParser()
 config.read("fighter.ini")

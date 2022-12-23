@@ -2,11 +2,13 @@ import configparser
 
 import pygame
 import pygame_menu
+from pygame import mixer
 from pygame_menu.examples import create_example_window
 
 import Level1
 import Level2
 import Level3
+import Level4
 import variables
 
 FPS = 60
@@ -25,6 +27,7 @@ def start_the_game():
     config.read("fighter.ini")
 
     Level = int(config.get("fighter", "level"))
+
     global test
     if Level == 1:
         Level1.main_game()
@@ -43,6 +46,10 @@ def start_the_game():
         Level3.main_game()
         test = True
 
+    if Level == 4:
+        Level4.main_game()
+        test = True
+
 
 background_image = pygame_menu.BaseImage(
     image_path="assets/bg.png"
@@ -57,6 +64,11 @@ WINDOW_SIZE = (variables.SCREEN_WIDTH, variables.SCREEN_HEIGHT)
 
 
 def main() -> None:
+    mixer.init()
+    # загрузка музыки
+    pygame.mixer.music.load("assets/audio/other/menu.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1, 0.0, 5000)
     global test
     global clock
     global surface
