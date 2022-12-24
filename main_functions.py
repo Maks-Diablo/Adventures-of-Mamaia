@@ -1,4 +1,6 @@
 import configparser
+import math
+import time
 
 import pygame
 from pygame.locals import *
@@ -17,11 +19,17 @@ FPS = variables.FPS
 YELLOW = variables.YELLOW
 RED = variables.RED
 WHITE = variables.WHITE
+grenade = pygame.transform.scale(pygame.image.load(r"assets/grenade.png"), (50, 50))
+x = 0
+y = 0
+v = 0
+vx = 0
+vy = 0
 
 
 class Func:
     def draw_game_over(self):
-        game_over_image = pygame.image.load("assets/game_over.png").convert_alpha()
+        game_over_image = pygame.image.load("assets/backgrounds/game_over.png").convert_alpha()
         scaled_bg = pygame.transform.scale(game_over_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
         screen.blit(scaled_bg, (0, 0))
 
@@ -95,7 +103,7 @@ class Func:
         difficulty = config.get("fighter", "difficulty")
         if type == 0:
             if int(difficulty) == 0:
-                health = 100
+                health = 70
             if int(difficulty) == 2:
                 health = 10
             if int(difficulty) == 1:
@@ -108,3 +116,33 @@ class Func:
             if int(difficulty) == 1:
                 health = 500
         return health
+
+    @staticmethod
+    def draw_grenade(s, t):
+        global grenade, x, y, v, vx, vy
+        # v = -120
+        flag = False
+        if x == 0 and y == 0:
+            x = SCREEN_WIDTH
+            y = 700
+            v = -math.sqrt((SCREEN_WIDTH + 300 - s) * 10)
+            print()
+            # a = math.asin((SCREEN_WIDTH+300-s)*10/(v*v))/2
+            vx = v * math.cos(45)
+            vy = v * math.sin(45)
+
+        t = (time.time() - t) * 10
+
+        x = SCREEN_WIDTH + 300 + vx * t
+        y = 794 + (vy * t + 5 * t * t)
+        print(y)
+        if x <= s:
+            x = s
+        if y >= 800:
+            y = 800
+
+        if x <= s and y >= 800:
+            flag = True
+
+        screen.blit(grenade, (x, y))
+        return flag

@@ -169,7 +169,7 @@ def main_game():
 
         # проверка перехода на след уровень
         if fighter_2.alive == False and variables.video_bool:
-            if time.time() - timing_ultra > 5.0:
+            if time.time() - timing_ultra > 2.0:
                 timing_ultra = time.time()
                 clip = VideoFileClip('assets/video/cut-scene-level1_2(0).mp4')
                 clipresized = clip.resize(height=variables.SCREEN_HEIGHT)

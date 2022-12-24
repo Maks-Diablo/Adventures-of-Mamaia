@@ -232,16 +232,19 @@ def main_game():
             aleksis = False
 
         # проверка перехода на след уровень
-        if fighter_bot1.alive == False and fighter_bot2.alive == False and fighter_soldier_bot.alive == False and fighter_mamai.rect.right > SCREEN_WIDTH:
-            LEVEL = 1
-            config = configparser.ConfigParser()
-            config.read("fighter.ini")
-            config.set("fighter", "health", str(fighter_mamai.health))
-            config.set("fighter", "level", "3")
-            config.set("fighter", "ultra", str(fighter_mamai.ultra_aleksis))
-            with open("fighter.ini", "w") as config_file:
-                config.write(config_file)
-            run = False
+        # if fighter_bot1.alive == False and fighter_bot2.alive == False and fighter_soldier_bot.alive == False and fighter_mamai.rect.right > SCREEN_WIDTH:
+        #     LEVEL = 1
+        #     config = configparser.ConfigParser()
+        #     config.read("fighter.ini")
+        #     config.set("fighter", "health", str(fighter_mamai.health))
+        #     config.set("fighter", "level", "3")
+        #     config.set("fighter", "ultra", str(fighter_mamai.ultra_aleksis))
+        #     with open("fighter.ini", "w") as config_file:
+        #         config.write(config_file)
+        #     run = False
+
+        if fighter_bot1.alive == False and fighter_bot2.alive == False and fighter_soldier_bot.alive == False:
+            break
 
         # обработчик событий
         if pygame.key.get_pressed()[pygame.K_ESCAPE]:
@@ -282,3 +285,74 @@ def main_game():
                 LEVEL = 1
 
         pygame.display.update()
+
+    t = time.time()
+    flag = False
+    explosion = []
+    for i in range(7):
+        explosion.append(pygame.transform.scale(
+            pygame.image.load(r"assets\прочее\explosion\Explosion_" + str(i + 1) + ".png").convert_alpha(), (300, 300)))
+
+    animation_cooldown = 80
+
+    frame_index = 0
+    # проверка прошло ли достаточно времени с момента последнего обновления
+    # while frame_index < 6:
+    #     if pygame.time.get_ticks() - update_time > animation_cooldown:
+    #         frame_index += 1
+    #         update_time = pygame.time.get_ticks()
+    #     screen.blit(grenade, (x, y))
+    MUSIC_END = pygame.USEREVENT + 1
+    pygame.mixer.music.set_endevent(MUSIC_END)
+    pygame.mixer.music.load("assets/audio/полковник/granade.mp3")
+    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.play(0)
+    run2 = True
+    while run2:
+        clock.tick(FPS)  # задержка
+
+        # отрисовка фона
+        Func.draw_bg(level_game)
+
+        # показать здоровье игрока
+        Func.draw_health_bar(fighter_mamai.health, 0, 0)
+
+        # показать уровень ульты игрока
+        Func.draw_ultra_bar(fighter_mamai.ultra_aleksis, 0, 0)
+        fighter_mamai.draw(screen)
+        fighter_soldier_bot.draw(screen)
+        fighter_bot1.draw(screen)
+        fighter_bot2.draw(screen)
+        # pygame.mixer.music.load("assets/audio/полковник/взрыв_контузия.mp3")
+        # pygame.mixer.music.set_volume(1)
+        # pygame.mixer.music.play(0)
+        if (not flag):
+            flag = Func.draw_grenade(fighter_mamai.rect.x, t)
+            update_time = pygame.time.get_ticks()
+        if flag and frame_index < 7:
+            print(frame_index)
+            screen.blit(explosion[frame_index], (fighter_mamai.rect.x, 550))
+            if pygame.time.get_ticks() - update_time > animation_cooldown:
+                update_time = pygame.time.get_ticks()
+                frame_index += 1
+
+        fighter_mamai.update()
+
+        if frame_index == 4 or frame_index == 5 or frame_index == 6 or frame_index == 7:
+            sc = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+            sc.fill((0, 0, 0))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run2 = False
+            if frame_index == 7 and event.type == MUSIC_END:
+                LEVEL = 1
+                config = configparser.ConfigParser()
+                config.read("fighter.ini")
+                config.set("fighter", "health", str(fighter_mamai.health))
+                config.set("fighter", "level", "3")
+                config.set("fighter", "ultra", str(fighter_mamai.ultra_aleksis))
+                with open("fighter.ini", "w") as config_file:
+                    config.write(config_file)
+                run2 = False

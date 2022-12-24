@@ -129,7 +129,7 @@ def main_game():
             LEVEL = 1
             config = configparser.ConfigParser()
             config.read("fighter.ini")
-            config.set("fighter", "health", "100")
+            config.set("fighter", "health", "200")
             config.set("fighter", "level", "4")
             config.set("fighter", "ultra", str(fighter_1.ultra_aleksis))
             with open("fighter.ini", "w") as config_file:

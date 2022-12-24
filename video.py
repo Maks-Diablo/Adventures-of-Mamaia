@@ -2,6 +2,10 @@ from moviepy.editor import VideoFileClip
 
 import variables
 
+def intro_credits():
+    clip = VideoFileClip('assets/video/credits_intro.mp4')
+    clipresized = clip.resize(height=variables.SCREEN_HEIGHT)
+    clipresized.preview()
 
 def level_1_credits():
     clip = VideoFileClip('assets/video/credits_level_1.mp4')
@@ -40,7 +44,7 @@ def level_3_cut_scene():
 
 
 def level_4_credits():
-    clip = VideoFileClip('assets/video/credits_level_4.mp4')
+    clip = VideoFileClip('assets/video/credits_level_4_2.mp4')
     clipresized = clip.resize(height=variables.SCREEN_HEIGHT)
     clipresized.preview()
 

@@ -14,7 +14,7 @@ def main():
     config = configparser.ConfigParser()
     config.read("fighter.ini")
     config.set("fighter", "health", "200")
-    config.set("fighter", "level", "2")
+    config.set("fighter", "level", "3")
     config.set("fighter", "ultra", "3")
 
     with open("fighter.ini", "w") as config_file:
@@ -26,6 +26,7 @@ def main():
     Level = int(config.get("fighter", "level"))
 
     if Level == 1:
+        video.intro_credits()
         video.level_1_credits()
         video.level_1_cut_scene()
         Level1.create_fighters()
